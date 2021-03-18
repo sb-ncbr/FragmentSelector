@@ -1,0 +1,5 @@
+# Set path to PyMOL executable or simply 'pymol' if it is on PATH:
+PymolExecutable: pymol
+
+# Set path to PyMOL script (absolute or relative to this config file):
+PymolScript: ../../../script_pymol.py

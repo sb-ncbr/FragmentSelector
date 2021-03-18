@@ -1,0 +1,13 @@
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/bin/Release/netcoreapp3.1/FragmentSelector
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/bin/Release/netcoreapp3.1/FragmentSelector.deps.json
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/bin/Release/netcoreapp3.1/FragmentSelector.runtimeconfig.json
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/bin/Release/netcoreapp3.1/FragmentSelector.runtimeconfig.dev.json
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/bin/Release/netcoreapp3.1/FragmentSelector.dll
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/bin/Release/netcoreapp3.1/FragmentSelector.pdb
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/obj/Release/netcoreapp3.1/FragmentSelector.csprojAssemblyReference.cache
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/obj/Release/netcoreapp3.1/FragmentSelector.AssemblyInfoInputs.cache
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/obj/Release/netcoreapp3.1/FragmentSelector.AssemblyInfo.cs
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/obj/Release/netcoreapp3.1/FragmentSelector.csproj.CoreCompileInputs.cache
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/obj/Release/netcoreapp3.1/FragmentSelector.dll
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/obj/Release/netcoreapp3.1/FragmentSelector.pdb
+/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/obj/Release/netcoreapp3.1/FragmentSelector.genruntimeconfig.cache

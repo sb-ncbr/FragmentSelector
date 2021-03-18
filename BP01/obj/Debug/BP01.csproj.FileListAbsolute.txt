@@ -1,8 +1,0 @@
-C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\bin\Debug\BP01.exe.config
-C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\obj\Debug\BP01.csprojResolveAssemblyReference.cache
-C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\bin\Debug\BP01.exe
-C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\bin\Debug\BP01.pdb
-C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\obj\Debug\BP01.exe
-C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\obj\Debug\BP01.pdb
-C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\obj\Debug\BP01.Properties.Resources.resources
-C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\obj\Debug\BP01.csproj.GenerateResource.Cache
