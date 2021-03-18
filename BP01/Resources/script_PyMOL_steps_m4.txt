@@ -1,0 +1,43 @@
+load ${inputFile}, protein
+load ${outputFileWithoutExtension}_step_1${outputFileExtension}, step1
+load ${outputFileWithoutExtension}_step_2${outputFileExtension}, step2
+load ${outputFileWithoutExtension}_step_3${outputFileExtension}, step3
+load ${outputFileWithoutExtension}_step_4${outputFileExtension}, step4
+load ${outputFileWithoutExtension}_step_5${outputFileExtension}, step5
+load ${outputFileWithoutExtension}_step_6${outputFileExtension}, step6
+
+
+select zn, symbol ${centralAtomSymbol};
+select sel1, step1 around 0.01 | step1;
+select sel2, step2 around 0.01 | step2;
+select sel3, step3 around 0.01 | step3;
+select sel4, step4 around 0.01 | step4;
+select sel5, step5 around 0.01 | step5;
+select sel6, step6 around 0.01 | step6;
+
+hide;
+show cartoon;
+show spheres, zn;
+
+color wheat;
+color green, sel1;
+color blue, sel2 & not sel1;
+color red, sel2 & not sel3;
+color marine, sel4 & not sel3;
+color yellow, sel5 & not sel4;
+color magenta, sel6 & not sel5;
+color blue, zn;
+
+disable all;
+enable protein;
+
+zoom sel6;
+
+delete zn;
+delete sel1;
+delete sel2;
+delete sel3;
+delete sel4;
+delete sel5;
+delete sel6;
+save ${outputFileWithoutExtension}_steps.pse;

@@ -1,0 +1,23 @@
+load ${inputFile}, protein
+load ${outputFileWithoutExtension}${outputFileExtension}, result
+
+
+select zn, symbol ${centralAtomSymbol};
+select res, result around 0.01 | result;
+
+hide;
+show cartoon;
+show spheres, zn;
+
+color wheat;
+color green, res;
+color blue, zn;
+
+disable all;
+enable protein;
+
+zoom res;
+
+delete zn;
+delete res;
+save ${outputFileWithoutExtension}.pse;

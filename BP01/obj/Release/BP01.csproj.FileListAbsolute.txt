@@ -1,0 +1,7 @@
+C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\bin\Release\BP01.exe.config
+C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\bin\Release\BP01.exe
+C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\bin\Release\BP01.pdb
+C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\obj\Release\BP01.Properties.Resources.resources
+C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\obj\Release\BP01.csproj.GenerateResource.Cache
+C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\obj\Release\BP01.exe
+C:\dokumenty\Workspace\VisualStudioC#\BP01\BP01\obj\Release\BP01.pdb
