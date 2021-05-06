@@ -11,7 +11,7 @@ namespace FragmentSelector
     {
         TextWriter writer;
         List<String> blocks;
-        public Level LogLevel { get; set; }
+        public Level LogLevel { get; private set; }
         public bool TotalIgnore { get; set; }
 
         public Logger(TextWriter writer, bool totalIgnore)
@@ -38,8 +38,12 @@ namespace FragmentSelector
 
         public void Close()
         {
-            if (blocks.Count != 1) throw new InvalidOperationException("Not all blocks are closed.");
-            CloseBlock("log");
+            if (!TotalIgnore){
+                if (blocks.Count != 1) {
+                    throw new InvalidOperationException("Not all blocks are closed.");
+                }
+                CloseBlock("log");
+            }
             writer.Close();
             writer = null;
         }
@@ -160,6 +164,6 @@ namespace FragmentSelector
             }
         }
 
-        public enum Level { FATAL=1, ERROR, INFO, DEBUG}
+        public enum Level { NONE=0, FATAL=1, ERROR=2, INFO=3, DEBUG=4 }
     }
 }

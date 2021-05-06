@@ -44,6 +44,11 @@ namespace FragmentSelector
         
         public void AddAtom(Atom atom) { chainBuilder.AddAtom(atom); }
 
+        public bool ContainsAny(IEnumerable<Atom> atoms) {
+            var atomsHere = GetAtoms();
+            return atoms.Any(a => atomsHere.Contains(a));
+        }
+
         public int CompareTo(Chain other) { return this.chainBuilder.CompareTo(other.chainBuilder); }
 
         public class LengthComparer : IComparer<Chain>

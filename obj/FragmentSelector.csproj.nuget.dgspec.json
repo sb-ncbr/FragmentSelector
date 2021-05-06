@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/FragmentSelector.csproj": {}
+    "/home/adam/Workspace/C#/fragmentselector/FragmentSelector.csproj": {}
   },
   "projects": {
-    "/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/FragmentSelector.csproj": {
+    "/home/adam/Workspace/C#/fragmentselector/FragmentSelector.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/FragmentSelector.csproj",
+        "projectUniqueName": "/home/adam/Workspace/C#/fragmentselector/FragmentSelector.csproj",
         "projectName": "FragmentSelector",
-        "projectPath": "/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/FragmentSelector.csproj",
+        "projectPath": "/home/adam/Workspace/C#/fragmentselector/FragmentSelector.csproj",
         "packagesPath": "/home/adam/.nuget/packages/",
-        "outputPath": "/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/obj/",
+        "outputPath": "/home/adam/Workspace/C#/fragmentselector/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/adam/.nuget/NuGet/NuGet.Config"

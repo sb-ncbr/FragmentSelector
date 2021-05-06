@@ -80,13 +80,40 @@ namespace FragmentSelector
             atoms.Add(atom);
         }
 
+        // public class DistanceComparer : IComparer<Residue>
+        // {
+        //     public Atom CentralAtom { get; private set; }
+
+        //     public DistanceComparer(Atom centralAtom)
+        //     {
+        //         CentralAtom = centralAtom;
+        //     }
+
+        //     public int Compare(Residue r1, Residue r2)
+        //     {
+        //         Atom a1 = null;
+        //         Atom a2 = null;
+        //         foreach (Atom atom in r1.GetAtoms()) if (atom.Name.Equals(" CA ")) a1 = atom;
+        //         foreach (Atom atom in r2.GetAtoms()) if (atom.Name.Equals(" CA ")) a2 = atom;
+        //         if (a1 == null && a2 == null) return a1.CompareTo(a1);
+        //         if (a1 == null) return 1;
+        //         if (a2 == null) return -1;
+        //         int result = Math.Sign(Lib.Distance(a1, CentralAtom) - Lib.Distance(a2, CentralAtom));
+        //         if (result != 0) return result;
+        //         else return a1.CompareTo(a2);
+        //     }
+        // }
+
         public class DistanceComparer : IComparer<Residue>
         {
-            public Atom CentralAtom { get; private set; }
+            public Atom[] CentralAtoms { get; private set; }
 
-            public DistanceComparer(Atom centralAtom)
+            public DistanceComparer(Atom[] centralAtoms)
             {
-                CentralAtom = centralAtom;
+                if (centralAtoms.Length == 0){
+                    throw new ArgumentException("centralAtoms must not be empty");
+                }
+                CentralAtoms = centralAtoms;
             }
 
             public int Compare(Residue r1, Residue r2)
@@ -98,7 +125,9 @@ namespace FragmentSelector
                 if (a1 == null && a2 == null) return a1.CompareTo(a1);
                 if (a1 == null) return 1;
                 if (a2 == null) return -1;
-                int result = Math.Sign(Lib.Distance(a1, CentralAtom) - Lib.Distance(a2, CentralAtom));
+                double d1 = CentralAtoms.Min(a => Lib.Distance(a, a1));
+                double d2 = CentralAtoms.Min(a => Lib.Distance(a, a2));
+                int result = Math.Sign(d1 - d2);
                 if (result != 0) return result;
                 else return a1.CompareTo(a2);
             }

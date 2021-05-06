@@ -10,9 +10,9 @@ namespace FragmentSelector
     class Settings
     {
         public String InputFileName { get; set; }
-        public int CentralAtomIndex { get; set; }
+        public AtomQuery CentralAtomQuery { get; set; }
         public Protein Protein { get; set; }
-        public Atom CentralAtom { get; set; }
+        public Atom[] CentralAtoms { get; set; }
         public double Radius { get; set; }
         public int MaxExcludable { get; set; } //maximum length of chain fragment, that can be excluded from the selection
         public int N { get; set; } //maximum number of selected atoms

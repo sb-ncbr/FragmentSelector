@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "AwV5JSfXYqAAdjPr478Pq/qzzdfnyai4jI2c+I9yKCHk5+NNCe3PCpBGeguYHkktJQIHWa2jGc6fsRIlfltg4w==",
+  "dgSpecHash": "dBQRIx4sXYSr5E6eKRLi3S7YXIKkbcwPcQnMPeZhd4KqXi0+SzKJ5Ec/eoTqHNWSAihpsnADb9KzK3w7McocCA==",
   "success": true,
-  "projectFilePath": "/home/adam/Workspace/C#/FragmentSelector/FragmentSelector/FragmentSelector.csproj",
+  "projectFilePath": "/home/adam/Workspace/C#/fragmentselector/FragmentSelector.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

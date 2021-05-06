@@ -13,7 +13,7 @@ namespace FragmentSelector {
         public static Logger logger;
         const string VERSION = "FragmentSelector 2.0 [2021-03-18]";
 
-        static void Main(string[] args) {
+        static int Main(string[] args) {
             try {
                 // Declaration of variables.
                 Settings settings = new Settings();
@@ -33,7 +33,7 @@ namespace FragmentSelector {
                 // Reading arguments and options.
                 bool argsOK = TryReadArguments(args, settings);
                 if (!argsOK) {
-                    return;
+                    return 1;
                 }
 
                 // Creating the log file.
@@ -55,7 +55,8 @@ namespace FragmentSelector {
                 if (settings.LogMode == 1) Program.logger.TotalIgnore = false;
                 Program.logger.OpenBlock("Settings");
                 Program.logger.Info("Input file = \"" + settings.InputFileName + "\"");
-                Program.logger.Info("Index of the central atom = " + settings.CentralAtomIndex);
+                // Program.logger.Info("Index of the central atom = " + settings.CentralAtomIndex);
+                Program.logger.Info("Central atom query = " + settings.CentralAtomQuery);
                 Program.logger.Info("Radius = " + settings.Radius);
                 Program.logger.Info("Maximal number of atoms = " + settings.N);
                 Program.logger.Info("Maximal length of excludable fragment = " + settings.MaxExcludable);
@@ -69,7 +70,7 @@ namespace FragmentSelector {
                 Program.logger.OpenBlock("Parsing the input file.");
                 settings.Protein = ReadProtein(settings.InputFileName);
                 if (settings.Protein == null){
-                    return;
+                    return 2;
                 }
                 Program.logger.Info(settings.Protein.GetChains().Count + " chains found.");
                 Program.logger.Info(settings.Protein.GetResidues().Count + " residues found.");
@@ -77,16 +78,15 @@ namespace FragmentSelector {
                 Program.logger.CloseBlock("Parsing the input file.");
 
                 // Finding the central atom.
-                try {
-                    settings.CentralAtom = settings.Protein.GetAtoms().First<Atom>(atom => atom.Serial == settings.CentralAtomIndex);
-                    Program.logger.Info("Central atom found: " + settings.CentralAtom);
-                } catch (InvalidOperationException) {
-                    Console.Error.WriteLine("Atom with index " + settings.CentralAtomIndex + " not found.");
-                    Program.logger.Fatal("Atom with index " + settings.CentralAtomIndex + " not found.");
+                settings.CentralAtoms = settings.CentralAtomQuery.FindInProtein(settings.Protein);
+                Program.logger.Info($"Central atoms: {settings.CentralAtoms.Length}");
+                Console.WriteLine($"Central atoms: {settings.CentralAtoms.Length} ({settings.CentralAtomQuery})");
+                if (settings.CentralAtoms.Length == 0){
+                    Console.Error.WriteLine("Error: No central atoms.");
+                    Program.logger.Fatal("No central atoms.");
                     Program.logger.CloseFatal();
-                    return;
+                    return 3;
                 }
-
                 // Removing residues with no C alpha atom.
                 settings.Protein = settings.Protein.KeepOnlyNormalResidues();
 
@@ -97,7 +97,7 @@ namespace FragmentSelector {
                 // Output.
                 bool writeOK = WriteAtoms(selectedAtoms, settings.OutputFileName);
                 if (!writeOK){
-                    return;
+                    return 4;
                 }
 
                 // Running a script for PyMOL.
@@ -123,31 +123,33 @@ namespace FragmentSelector {
                         + ") is larger than the maximum number specified by the argument 4 (" + settings.N + ")! "
                         + "Use a smaller radius or a larger maximum number of atoms.");
                 }
-
                 // Closing the log stream.
                 Program.logger.Close();
+                return 0;
 
             } catch (Exception ex) {
                 if (Program.logger != null) {
                     Program.logger.Fatal(ex.Message + ex.StackTrace);
                     Program.logger.CloseFatal();
                 }
-                throw ex;
-                // Console.Error.WriteLine(ex.Message);
-                // Console.Error.WriteLine(ex.StackTrace);
-                // return;
+                Console.Error.WriteLine(ex);
+                Console.Error.WriteLine(ex.StackTrace);
+                // throw ex;
+                return -1;
             }
         }
 
         public static void SelectResiduesInRadius(State state, Settings settings) {
-            Program.logger.OpenBlock("Selecting residues in radius by CA.");
-            if (!settings.Any) {
-                state.Builder = new MultiChainBuilder(Lib.ResiduesInRadiusByCA(settings.Protein.GetResidues(), settings.CentralAtom, settings.Radius));
-            } else {
-                state.Builder = new MultiChainBuilder(Lib.ResiduesInRadiusByAny(settings.Protein.GetResidues(), settings.CentralAtom, settings.Radius));
-            }
+            string blockName = settings.Any ? "Selecting residues in radius by any atom." : "Selecting residues in radius by CA.";
+            Program.logger.OpenBlock(blockName);
+            state.Builder = new MultiChainBuilder(Lib.ResiduesInRadius(settings.Protein.GetResidues(), settings.CentralAtoms, settings.Radius, settings.Any));
+            // if (!settings.Any) {
+            //     state.Builder = new MultiChainBuilder(Lib.ResiduesInRadiusByCA(settings.Protein.GetResidues(), settings.CentralAtom, settings.Radius));
+            // } else {
+            //     state.Builder = new MultiChainBuilder(Lib.ResiduesInRadiusByAny(settings.Protein.GetResidues(), settings.CentralAtom, settings.Radius));
+            // }
             GetLoopsEnds(state, settings);
-            Program.logger.CloseBlock("Selecting residues in radius by CA.");
+            Program.logger.CloseBlock(blockName);
         }
 
         public static void GetLoopsEnds(State state, Settings settings) {
@@ -189,7 +191,9 @@ namespace FragmentSelector {
                 }
             }
 
-            state.Isolated.RemoveWhere(delegate (Chain chain) { return chain.GetAtoms().Contains(settings.CentralAtom); });
+            // state.Isolated.RemoveWhere(delegate (Chain chain) { return chain.GetAtoms().Contains(settings.CentralAtom); });
+            // state.Isolated.RemoveWhere(chain => chain.GetAtoms().Contains(settings.CentralAtom));
+            state.Isolated.RemoveWhere(chain => chain.ContainsAny(settings.CentralAtoms));
 
             Program.logger.Debug("Found loops, ends and isolated: " + loopsEndIsolated.Count);
             Program.logger.Debug("Found loops: " + state.Loops.Count);
@@ -245,10 +249,13 @@ namespace FragmentSelector {
                     + step
                     + Path.GetExtension(settings.OutputFileName));
 
+                foreach (Atom atom in settings.CentralAtoms) {
+                    writer.WriteLine(atom);
+                }
                 foreach (Atom atom in state.Builder.GetAtoms()) {
                     writer.WriteLine(atom);
                 }
-                writer.WriteLine(settings.CentralAtom);
+                // writer.WriteLine(settings.CentralAtom);
                 writer.WriteLine();
                 writer.Close();
 
@@ -288,7 +295,7 @@ namespace FragmentSelector {
             Program.logger.CloseBlockD("Lengths of sorted loops.");
             Program.logger.Info(selectedResidues.Sum(delegate (Residue residue) { return residue.GetAtoms().Count; }) + " selected atoms (" + selectedResidues.Count + " residues).");
             while (sortedLoops.Count > 0 &&
-                selectedResidues.Sum(delegate (Residue residue) { return residue.GetAtoms().Count; }) + sortedLoops.First().GetAtoms().Count < settings.N) {
+                    selectedResidues.Sum(residue => residue.GetAtoms().Count) + sortedLoops.First().GetAtoms().Count + settings.CentralAtoms.Length <= settings.N) {
                 Chain shortest = sortedLoops.First();
                 Program.logger.Info("Adding a loop with " + shortest.GetAtoms().Count + " atoms (" + shortest.Count + " residues).");
                 selectedResidues.UnionWith(shortest.GetResidues());
@@ -311,9 +318,9 @@ namespace FragmentSelector {
             Program.logger.OpenBlockD("Lengths of sorted ends.");
             foreach (Chain loop in sortedEnds) Program.logger.Debug(loop.Count.ToString());
             Program.logger.CloseBlockD("Lengths of sorted ends.");
-            Program.logger.Info(selectedResidues.Sum(delegate (Residue residue) { return residue.GetAtoms().Count; }) + " selected atoms (" + selectedResidues.Count + " residues).");
+            Program.logger.Info(selectedResidues.Sum(residue => residue.GetAtoms().Count) + " selected atoms (" + selectedResidues.Count + " residues).");
             while (sortedEnds.Count > 0 &&
-                selectedResidues.Sum(delegate (Residue residue) { return residue.GetAtoms().Count; }) + sortedEnds.First().GetAtoms().Count < settings.N) {
+                selectedResidues.Sum(residue => residue.GetAtoms().Count) + sortedEnds.First().GetAtoms().Count + settings.CentralAtoms.Length <= settings.N) {
                 Chain shortest = sortedEnds.First();
                 Program.logger.Info("Adding an end with " + shortest.GetAtoms().Count + " atoms (" + shortest.Count + " residues).");
                 selectedResidues.UnionWith(shortest.GetResidues());
@@ -347,9 +354,9 @@ namespace FragmentSelector {
                     endsLists.Add(list);
                 }
             }
-            List<Residue> residues = Lib.Merge<Residue>(endsLists, new Residue.DistanceComparer(settings.CentralAtom));
+            List<Residue> residues = Lib.Merge<Residue>(endsLists, new Residue.DistanceComparer(settings.CentralAtoms));
             int m = state.Builder.GetAtoms().Count;
-            while (residues.Count > 0 && m + residues.First().GetAtoms().Count <= settings.N) {
+            while (residues.Count > 0 && m + residues.First().GetAtoms().Count + settings.CentralAtoms.Length <= settings.N) {
                 Residue first = residues.First();
                 state.Builder.AddResidue(first);
                 m += first.GetAtoms().Count;
@@ -434,7 +441,8 @@ namespace FragmentSelector {
             }
 
             SortedSet<Atom> selectedAtoms = Lib.GetAtomsOfAll(state.Builder.GetResidues());
-            selectedAtoms.Add(settings.CentralAtom);
+            // selectedAtoms.Add(settings.CentralAtom);
+            selectedAtoms.UnionWith(settings.CentralAtoms);
             return selectedAtoms;
         }
 
@@ -461,8 +469,9 @@ namespace FragmentSelector {
             string mode = settings.PrintSteps ? settings.Mode.ToString() : "0";
             string outputFileWithoutExt = Path.Combine(Path.GetDirectoryName(settings.OutputFileName), Path.GetFileNameWithoutExtension(settings.OutputFileName));
             string outputFileExt = Path.GetExtension(settings.OutputFileName);
+            string centralAtomString = string.Join('+', settings.CentralAtoms.Select(a => a.Serial.ToString()));
             string[] args = new string[] {"-qcyr", Escape(scriptFilename), "--", 
-                Escape(mode), Escape(settings.InputFileName), Escape(outputFileWithoutExt), Escape(outputFileExt), Escape(settings.CentralAtom.Element) };
+                Escape(mode), Escape(settings.InputFileName), Escape(outputFileWithoutExt), Escape(outputFileExt), Escape(centralAtomString) };
             string arguments = string.Join(' ', args);
 
             bool success = Lib.RunCommand(config.PymolExecutable, arguments);
@@ -562,13 +571,19 @@ namespace FragmentSelector {
             }
             settings.InputFileName = regularArgs[0];
 
-            int cai;
-            if (Int32.TryParse(regularArgs[1], out cai)) {
-                settings.CentralAtomIndex = cai;
-            } else {
-                Console.Error.WriteLine("Wrong format of 2nd argument: integer expected.");
+            try {
+                settings.CentralAtomQuery = new AtomQuery(regularArgs[1]);
+            } catch (FormatException ex) {
+                Console.Error.WriteLine($"Wrong format of 2nd argument: {ex.Message}");
                 return false;
             }
+            // int cai;
+            // if (Int32.TryParse(regularArgs[1], out cai)) {
+            //     settings.CentralAtomIndex = cai;
+            // } else {
+            //     Console.Error.WriteLine("Wrong format of 2nd argument: integer expected.");
+            //     return false;
+            // }
 
             double r;
             if (Double.TryParse(regularArgs[2], NumberStyles.Float, new CultureInfo("en-US"), out r)) {
@@ -588,6 +603,8 @@ namespace FragmentSelector {
 
             return true;
         }
+
+        private static void ParseAtomQuery(){}
 
         private static void PrintHelp(int nActualArgs) {
             Console.Error.WriteLine(VERSION);
