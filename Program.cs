@@ -611,7 +611,7 @@ namespace FragmentSelector {
             Console.Error.WriteLine();
             Console.Error.WriteLine("Wrong number or type of arguments: 4 expected, " + nActualArgs + " found.");
             Console.Error.WriteLine("   argument 1: input PDB file");
-            Console.Error.WriteLine("   argument 2: index of the central atom");
+            Console.Error.WriteLine("   argument 2: the central atom(s) specified by atom query string");
             Console.Error.WriteLine("   argument 3: radius in Angstroms");
             Console.Error.WriteLine("   argument 4: maximum number of atoms");
             Console.Error.WriteLine("Options:");
@@ -636,6 +636,8 @@ namespace FragmentSelector {
             Console.Error.WriteLine("   -o outputFileName    Sets the file for output (default = standard output).");
             Console.Error.WriteLine("   -r                   Run PyMOL script to make a .pse file.");
             Console.Error.WriteLine("   -s                   Prints result of each step in a separate file.");
+            Console.Error.WriteLine("Example:");
+            Console.Error.WriteLine("   dotnet FragmentSelector.dll data/1tqn.pdb 'id=3810' 8 500 -o data/1tqn.fragment.pdb");
         }
 
         private static Protein ReadProtein(string filename){

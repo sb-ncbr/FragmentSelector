@@ -8,7 +8,7 @@ a protein. The requirements for the resulting fragment are:
 - The number of atoms in the fragment must not be higher than *N* but should be as close to *N* as possible (this is less important than the previous requirements).
 
 An input of the program is a PDB file containing a protein and the parameters *A*,
-*r*, and *N*. Other parameters can be set by options. The output is a file containing atoms of the selected fragment in PDB format. (The output file will only contain ATOM and HETATMS records.)
+*r*, and *N*. Parameter *A* can be one atom or a set of atoms specified by an atom query string (see Remarks). Other parameters can be set by options. The output is a file containing atoms of the selected fragment in PDB format. (The output file will only contain ATOM and HETATMS records.)
 
 ## Dependencies
 
@@ -27,17 +27,25 @@ Print version and help message:
 
 Cut fragment with at most 500 atoms around atom 3810 in `data/1tqn.pdb` with required radius 10 Angstroms. Save result in `data/1tqn.fragment.pdb`:
 
-    dotnet release/FragmentSelector.dll data/1tqn.pdb 3810 8 500 -o data/1tqn.fragment.pdb
+    dotnet release/FragmentSelector.dll data/1tqn.pdb 'id=3810' 8 500 -o data/1tqn.fragment.pdb
 
 The same, but use algorithm mode 1, print partial result from each step, and create a PyMOL session with visualization of the results:
 
-    dotnet release/FragmentSelector.dll data/1tqn.pdb 3810 8 500 -o data/1tqn.fragment.pdb -m 1 -s -r
+    dotnet release/FragmentSelector.dll data/1tqn.pdb 'id=3810' 8 500 -o data/1tqn.fragment.pdb -m 1 -s -r
 
 ## Remarks
 
 Using the `-r` option (create PyMOL session) requires that PyMOL be installed on the system, and that `release/config.txt` contain the path to the PyMOL executable.
 
 Multiple options must not be grouped together (e.g. `-s -r` cannot be shortened to `-sr`).
+
+**Atom query string** can be used as the 2nd parameter to specify more than one central atom. This string can specify chain ID (`chain`), residue number (`resi`), residue type (`resn`), atom name (`name`), and atom ID (`id`). Examples:
+
+    'chain=A&resi125'
+    'chain=B&resn=ALA&name=CA'
+    'id=3810'
+
+Quoting the atom query string is recommended (`&` is a special character in bash).
 
 ## More information
 
